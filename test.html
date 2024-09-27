@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blockly Game</title>
+  <style>
+    #blocklyDiv {
+      height: 480px;
+      width: 600px;
+      float: left;
+    }
+    #mazeCanvas {
+      border: 1px solid #ccc;
+      float: left;
+      margin-left: 610px;
+      margin-top: -513px;
+      cursor: move;
+    }
+    #runButton {
+      clear: both;
+      display: block;
+      padding: 8px 16px;
+      font-size: 12px;
+      text-align: center; 
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Blockly Game</h1>
+  <div id="blocklyDiv"></div>
+  <button id="runButton">Run Code</button>
+  <canvas id="mazeCanvas" width="600" height="480"></canvas>
+  
+  <!-- Load Blockly -->
+  <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+  <script src="https://unpkg.com/@blockly/dev-tools/dist/index.min.js"></script>
+  <script src="https://unpkg.com/blockly/msg/js/en.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+    // Define the custom block
+Blockly.defineBlocksWithJsonArray([
+  {
+    "type": "move_forward",
+    "message0": "move forward",
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 230,
+    "tooltip": "Moves the object forward",
+    "helpUrl": ""
+  },
+  {
+    "type": "move_backward",
+    "message0": "move backward",
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 230,
+    "tooltip": "Moves the object backward",
+    "helpUrl": ""
+  },
+  {
+    "type": "move_left",
+    "message0": "move left",
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 230,
+    "tooltip": "Moves the object left",
+    "helpUrl": ""
+  },
+  {
+    "type": "move_right",
+    "message0": "move right",
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 230,
+    "tooltip": "Moves the object right",
+    "helpUrl": ""
+  },
+  {
+    "type": "stop",
+    "message0": "stop",
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 230,
+    "tooltip": "Stops the object",
+    "helpUrl": ""
+  }
+]);
+
+// Define the JavaScript code generator for the custom motion blocks
+Blockly.JavaScript['move_forward'] = function(block) {
+  var code = 'moveForward();\n';
+  return code;
+};
+
+Blockly.JavaScript['move_backward'] = function(block) {
+  var code = 'moveBackward();\n';
+  return code;
+};
+
+Blockly.JavaScript['move_left'] = function(block) {
+  var code = 'moveLeft();\n';
+  return code;
+};
+
+Blockly.JavaScript['move_right'] = function(block) {
+  var code = 'moveRight();\n';
+  return code;
+};
+
+Blockly.JavaScript['stop'] = function(block) {
+  var code = 'stop();\n';
+  return code;
+};
+
+
+    // Initialize Blockly
+    var workspace = Blockly.inject('blocklyDiv', {
+      toolbox: `
+        <xml xmlns="http://www.w3.org/1999/xhtml">
+          <category name="Logic" colour="210">
+            <block type="controls_if"></block>
+            <block type="logic_compare"></block>
+            <block type="logic_operation"></block>
+            <block type="logic_negate"></block>
+            <block type="logic_boolean"></block>
+            <block type="logic_null"></block>
+            <block type="logic_ternary"></block>
+          </category>
+          <category name="Loops" colour="120">
+            <block type="controls_repeat_ext">
+              <value name="TIMES">
+                <block type="math_number">
+                  <field name="NUM">10</field>
+                </block>
+              </value>
+            </block>
+            <block type="controls_whileUntil"></block>
+            <block type="controls_for">
+              <value name="FROM">
+                <block type="math_number">
+                  <field name="NUM">1</field>
+                </block>
+              </value>
+              <value name="TO">
+                <block type="math_number">
+                  <field name="NUM">10</field>
+                </block>
+              </value>
+              <value name="BY">
+                <block type="math_number">
+                  <field name="NUM">1</field>
+                </block>
+              </value>
+            </block>
+            <block type="controls_forEach"></block>
+            <block type="controls_flow_statements"></block>
+          </category>
+          <category name="Math" colour="230">
+            <block type="math_number"></block>
+            <block type="math_arithmetic"></block>
+            <block type="math_single"></block>
+            <block type="math_trig"></block>
+            <block type="math_constant"></block>
+            <block type="math_number_property"></block>
+            <block type="math_round"></block>
+            <block type="math_on_list"></block>
+            <block type="math_modulo"></block>
+            <block type="math_constrain"></block>
+            <block type="math_random_int"></block>
+            <block type="math_random_float"></block>
+            <block type="math_atan2"></block>
+          </category>
+          <category name="Text" colour="160">
+            <block type="text"></block>
+            <block type="text_join"></block>
+            <block type="text_append">
+              <value name="TEXT">
+                <block type="text"></block>
+              </value>
+            </block>
+            <block type="text_length"></block>
+            <block type="text_isEmpty"></block>
+            <block type="text_indexOf">
+              <value name="VALUE">
+                <block type="variables_get">
+                  <field name="VAR">text</field>
+                </block>
+              </value>
+            </block>
+            <block type="text_charAt">
+              <value name="VALUE">
+                <block type="variables_get">
+                  <field name="VAR">text</field>
+                </block>
+              </value>
+            </block>
+            <block type="text_getSubstring">
+              <value name="STRING">
+                <block type="variables_get">
+                  <field name="VAR">text</field>
+                </block>
+              </value>
+            </block>
+            <block type="text_changeCase"></block>
+            <block type="text_trim"></block>
+            <block type="text_print"></block>
+            <block type="text_prompt_ext">
+              <value name="TEXT">
+                <block type="text"></block>
+              </value>
+            </block>
+          </category>
+          <category name="Lists" colour="260">
+            <block type="lists_create_with"></block>
+            <block type="lists_create_with"></block>
+            <block type="lists_repeat">
+              <value name="NUM">
+                <block type="math_number">
+                  <field name="NUM">5</field>
+                </block>
+              </value>
+            </block>
+            <block type="lists_length"></block>
+            <block type="lists_isEmpty"></block>
+            <block type="lists_indexOf">
+              <value name="VALUE">
+                <block type="variables_get">
+                  <field name="VAR">list</field>
+                </block>
+              </value>
+            </block>
+            <block type="lists_getIndex">
+              <value name="VALUE">
+                <block type="variables_get">
+                  <field name="VAR">list</field>
+                </block>
+              </value>
+            </block>
+            <block type="lists_setIndex">
+              <value name="LIST">
+                <block type="variables_get">
+                  <field name="VAR">list</field>
+                </block>
+              </value>
+            </block>
+            <block type="lists_getSublist">
+              <value name="LIST">
+                <block type="variables_get">
+                  <field name="VAR">list</field>
+                </block>
+              </value>
+            </block>
+            <block type="lists_split">
+              <value name="DELIM">
+                <block type="text">
+                  <field name="TEXT">,</field>
+                </block>
+              </value>
+            </block>
+            <block type="lists_sort"></block>
+          </category>
+          <category name="Colour" colour="20">
+            <block type="colour_picker"></block>
+            <block type="colour_random"></block>
+            <block type="colour_rgb">
+              <value name="RED">
+                <block type="math_number">
+                  <field name="NUM">255</field>
+                </block>
+              </value>
+              <value name="GREEN">
+                <block type="math_number">
+                  <field name="NUM">0</field>
+                </block>
+              </value>
+              <value name="BLUE">
+                <block type="math_number">
+                  <field name="NUM">0</field>
+                </block>
+              </value>
+            </block>
+            <block type="colour_blend">
+              <value name="COLOUR1">
+                <block type="colour_picker"></block>
+              </value>
+              <value name="COLOUR2">
+                <block type="colour_picker"></block>
+              </value>
+              <value name="RATIO">
+                <block type="math_number">
+                  <field name="NUM">0.5</field>
+                </block>
+              </value>
+            </block>
+          </category>
+          <category name="Variables" colour="330" custom="VARIABLE"></category>
+          <category name="Functions" colour="290" custom="PROCEDURE"></category>
+          <category name="Motion" colour="290">
+           <block type="move_forward"></block>
+           <block type="move_backward"></block>
+           <block type="move_left"></block>
+           <block type="move_right"></block>
+           <block type="stop"></block>
+          </category>
+        </xml>`,
+
+      grid: {
+        spacing: 20,
+        length: 3,
+        colour: '#ccc',
+        snap: true
+      }
+    });
+
+      
+      // Example of how to use the generated code with the canvas
+      const canvas = document.getElementById('mazeCanvas');
+      const ctx = canvas.getContext('2d');
+      const arrowImg = new Image();
+      arrowImg.src = 'img/arrow.png'; 
+      const bgImg = new Image();
+      bgImg.src = 'img/bg.png';
+      const position = { x: 0, y: 0 };
+      let arrowX = canvas.width / 2;
+      let arrowY = canvas.height / 2;
+      const moveDistance = 10;
+      let isDragging = false;
+      let isCodeRunning = false;
+
+
+      function drawCanvas() {
+  // Draw background
+  ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+  // Draw arrow
+  ctx.drawImage(arrowImg, arrowX - arrowImg.width / 2, arrowY - arrowImg.height / 2);
+}
+
+    // Implement the motion functions
+    function moveForward() {
+      arrowY -= moveDistance;
+      drawArrow();
+    }
+
+    function moveBackward() { 
+      arrowY += moveDistance;
+      drawArrow();
+    }
+
+    function moveLeft() {
+      arrowX -= moveDistance;
+      drawArrow();
+    }
+
+    function moveRight() {
+      arrowX += moveDistance;
+      drawArrow();
+    }
+
+    function stop() {
+      // The stop function doesn't need to do anything in this case
+      console.log('Stopped');
+    }
+
+    // Function to execute Blockly code
+    function runCode() {
+      // Reset arrow position
+      arrowX = canvas.width / 2;
+      arrowY = canvas.height / 2;
+      
+      // Generate JavaScript code from Blockly blocks
+      var code = Blockly.JavaScript.workspaceToCode(workspace);
+      
+      // Execute the generated code
+      try {
+        eval(code);
+      } catch (e) {
+        console.error('Error executing code:', e);
+      }
+    }
+
+    // Add event listener to the Run Code button
+    document.getElementById('runButton').addEventListener('click', runCode);
+
+    canvas.addEventListener('mousedown', (e) => {
+      if (!isCodeRunning) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        
+        // Check if the mouse is over the arrow
+        if (Math.abs(mouseX - arrowX) < arrowImg.width / 2 && 
+            Math.abs(mouseY - arrowY) < arrowImg.height / 2) {
+          isDragging = true;
+        }
+      }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+  if (isDragging && !isCodeRunning) {
+    const rect = canvas.getBoundingClientRect();
+    arrowX = e.clientX - rect.left;
+    arrowY = e.clientY - rect.top;
+    drawCanvas();
+  }
+});
+
+    canvas.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      isDragging = false;
+    });
+
+    let imagesLoaded = 0;
+function onImageLoad() {
+  imagesLoaded++;
+  if (imagesLoaded === 2) {
+    drawCanvas();
+  }
+}
+arrowImg.onload = onImageLoad;
+bgImg.onload = onImageLoad;
+  </script>
+</body>
+</html> 
